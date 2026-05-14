@@ -1,0 +1,49 @@
+@model IEnumerable<E_commerce_system.Models.SupportTicket>
+@{
+    ViewData["Title"] = "Customer Support";
+}
+
+<div class="support-container" style="max-width: 1000px; margin: 0 auto; padding: 2rem 0;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+        <div>
+            <h2 style="margin: 0 0 0.5rem 0;">Support Center</h2>
+            <p style="color: var(--text-secondary); margin: 0;">Manage your open tickets and start new conversations with our team.</p>
+        </div>
+        <a asp-action="Create" class="btn-primary" style="padding: 0.75rem 1.5rem; border-radius: 8px; background: black; color: white; text-decoration: none; font-weight: 600;"><i class="fa-solid fa-plus"></i> New Ticket</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+        @foreach (var ticket in Model ?? new List<E_commerce_system.Models.SupportTicket>())
+        {
+            <div class="ticket-card" style="background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s;">
+                <div style="display: flex; gap: 1.5rem; align-items: center;">
+                    <div style="width: 50px; height: 50px; background: rgba(139, 92, 246, 0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--accent);">
+                        <i class="fa-solid fa-headset" style="font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 0.25rem 0;">@ticket.Subject</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Ticket #@ticket.Id • Opened on @ticket.CreatedAt.ToShortDateString()</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <form asp-action="DeleteTicket" method="post" onsubmit="return confirm('Delete this ticket?');" style="display: inline;">
+                        <input type="hidden" name="id" value="@ticket.Id" />
+                        <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.5rem;" title="Delete Ticket">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </form>
+                    <a asp-action="Chat" asp-route-id="@ticket.Id" style="color: white; background: black; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.1);">Open Chat</a>
+                </div>
+            </div>
+        }
+
+        @if(!Model?.Any() ?? true)
+        {
+            <div style="text-align: center; padding: 4rem; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border);">
+                <i class="fa-regular fa-comments" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                <p style="color: var(--text-secondary);">You don't have any support tickets yet.</p>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 400px; margin: 0 auto;">Need help with an order or product? Create a new ticket and our support team will get right back to you.</p>
+            </div>
+        }
+    </div>
+</div>

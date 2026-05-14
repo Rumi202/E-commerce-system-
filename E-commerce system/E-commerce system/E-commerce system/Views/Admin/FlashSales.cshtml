@@ -1,0 +1,112 @@
+@model IEnumerable<E_commerce_system.Models.Product>
+@{
+    ViewData["Title"] = "Flash Sale Management";
+}
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: 80vh;">
+    <partial name="_AdminSidebar" />
+    
+    <div class="dashboard-content" style="padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h2 style="margin: 0;">⚡ Flash Sale Management</h2>
+                <p style="color: var(--text-secondary); margin: 0.5rem 0 0 0;">Set discount percentages for flash sale products shown on the homepage.</p>
+            </div>
+        </div>
+        
+        <div style="background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: rgba(0,0,0,0.3);">
+                    <tr>
+                        <th style="padding: 1rem;">Product</th>
+                        <th style="padding: 1rem;">Original Price</th>
+                        <th style="padding: 1rem;">Discount %</th>
+                        <th style="padding: 1rem;">Sale Price</th>
+                        <th style="padding: 1rem;">Status</th>
+                        <th style="padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model ?? new List<E_commerce_system.Models.Product>())
+                    {
+                        <tr style="border-top: 1px solid var(--glass-border);">
+                            <td style="padding: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: rgba(0,0,0,0.2); border-radius: 6px; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-solid fa-image" style="color: var(--text-secondary); font-size: 0.8rem;"></i>
+                                        }
+                                    </div>
+                                    <span style="font-weight: 600;">@item.Name</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1rem;">৳@item.Price.ToString("N0")</td>
+                            <td style="padding: 1rem;">
+                                @if (item.IsFlashSale)
+                                {
+                                    <span style="background: rgba(244, 63, 94, 0.2); color: #f43f5e; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 700; font-size: 0.9rem;">@item.DiscountPercentage%</span>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--text-secondary);">—</span>
+                                }
+                            </td>
+                            <td style="padding: 1rem;">
+                                @if (item.IsFlashSale)
+                                {
+                                    <span style="font-weight: 700; color: var(--accent-green);">৳@item.DiscountedPrice.ToString("N0")</span>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--text-secondary);">৳@item.Price.ToString("N0")</span>
+                                }
+                            </td>
+                            <td style="padding: 1rem;">
+                                @if (item.IsFlashSale)
+                                {
+                                    <span style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Active</span>
+                                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Until: @item.FlashSaleEndTime?.ToString("MMM dd, yyyy HH:mm")</div>
+                                }
+                                else
+                                {
+                                    <span style="background: rgba(107, 114, 128, 0.2); color: #9ca3af; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.85rem;">Inactive</span>
+                                }
+                            </td>
+                            <td style="padding: 1rem;">
+                                @if (item.IsFlashSale)
+                                {
+                                    <form asp-action="SetFlashSale" method="post" style="display: inline;">
+                                        <input type="hidden" name="productId" value="@item.Id" />
+                                        <input type="hidden" name="isFlashSale" value="false" />
+                                        <input type="hidden" name="discountPercentage" value="0" />
+                                        <button type="submit" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">Remove Sale</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="SetFlashSale" method="post" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                        <input type="hidden" name="productId" value="@item.Id" />
+                                        <input type="hidden" name="isFlashSale" value="true" />
+                                        <input type="number" name="discountPercentage" min="1" max="90" value="20" required style="width: 55px; padding: 0.4rem; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; text-align: center; font-weight: 600;" />
+                                        <span style="color: var(--text-secondary); font-size: 0.85rem;">%</span>
+                                        <input type="datetime-local" name="flashSaleEndTime" required style="padding: 0.4rem; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; font-size: 0.8rem;" />
+                                        <button type="submit" style="background: black; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">Add Sale</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if(!Model?.Any() ?? true)
+                    {
+                        <tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No products available.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

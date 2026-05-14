@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Verify Your Email";
+}
+
+<div class="page-wrapper" style="display: flex; justify-content: center; align-items: center; min-height: 70vh; margin-top: 2rem;">
+    <div style="background: white; padding: 3rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 100%; max-width: 450px; text-align: center; border: 1px solid var(--border-color);">
+        <div style="font-size: 3.5rem; color: var(--text-primary); margin-bottom: 1rem;">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h1 style="font-size: 1.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Enter Verification Code</h1>
+        <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem; font-size: 0.95rem;">
+            We've sent a 6-digit code to <strong style="color: var(--text-primary);">@ViewBag.Email</strong>. Please enter it below to verify your account.
+        </p>
+
+        @if (ViewBag.Message != null)
+        {
+            <div style="background: #ecfdf5; color: #059669; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 500;">
+                <i class="fa-solid fa-circle-check" style="margin-right: 0.5rem;"></i> @ViewBag.Message
+            </div>
+        }
+
+        @if (ViewBag.Error != null)
+        {
+            <div style="background: #fee2e2; color: #dc2626; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 500;">
+                <i class="fa-solid fa-circle-exclamation" style="margin-right: 0.5rem;"></i> @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="VerifyEmail" method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <input type="hidden" name="email" value="@ViewBag.Email" />
+            
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                <input type="text" name="code" maxlength="6" placeholder="000000" required
+                       style="width: 100%; text-align: center; font-size: 2rem; font-weight: 700; letter-spacing: 0.5rem; padding: 0.75rem; border: 2px solid var(--border-color); border-radius: 12px; outline: none; transition: border-color 0.2s;"
+                       onfocus="this.style.borderColor='var(--text-primary)'"
+                       onblur="this.style.borderColor='var(--border-color)'" />
+                <p style="font-size: 0.8rem; color: var(--text-secondary);">Enter the 6-digit code from your email</p>
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 1rem; background: black; color: white; border: none; border-radius: var(--radius-md); font-weight: 700; font-size: 1rem; cursor: pointer; transition: opacity 0.2s;">
+                Verify & Activate Account
+            </button>
+        </form>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+            <form asp-action="ResendVerificationCode" method="post" style="display: inline;">
+                <input type="hidden" name="email" value="@ViewBag.Email" />
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                    Didn't receive the email? 
+                    <button type="submit" style="background: none; border: none; color: var(--text-primary); font-weight: 600; cursor: pointer; padding: 0; font-size: 0.85rem; text-decoration: none;">Resend Code</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>

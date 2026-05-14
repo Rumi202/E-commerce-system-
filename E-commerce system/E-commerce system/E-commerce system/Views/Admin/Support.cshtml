@@ -1,0 +1,52 @@
+@model IEnumerable<E_commerce_system.Models.SupportTicket>
+@{
+    ViewData["Title"] = "Manage Support Tickets";
+}
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: 80vh;">
+    <partial name="_AdminSidebar" />
+    
+    <div class="dashboard-content" style="padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin: 0;">Support Tickets</h2>
+        </div>
+        
+        <div style="background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: rgba(0,0,0,0.3);">
+                    <tr>
+                        <th style="padding: 1rem;">Ticket ID</th>
+                        <th style="padding: 1rem;">User</th>
+                        <th style="padding: 1rem;">Subject</th>
+                        <th style="padding: 1rem;">Created At</th>
+                        <th style="padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model ?? new List<E_commerce_system.Models.SupportTicket>())
+                    {
+                        <tr style="border-top: 1px solid var(--glass-border);">
+                            <td style="padding: 1rem;">#@item.Id</td>
+                            <td style="padding: 1rem;">
+                                <div style="font-weight: 600;">@item.User?.Name</div>
+                                <div style="font-size: 0.75rem; color: var(--text-secondary);">@item.User?.Email</div>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <div style="font-weight: 500;">@item.Subject</div>
+                                <div style="font-size: 0.75rem; color: var(--accent);">@item.Category</div>
+                            </td>
+                            <td style="padding: 1rem;">@item.CreatedAt.ToShortDateString()</td>
+                            <td style="padding: 1rem;">
+                                <a asp-action="SupportChat" asp-route-id="@item.Id" style="color: var(--text-primary); background: var(--accent); padding: 0.4rem 0.8rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem;"><i class="fa-solid fa-comment"></i> Chat</a>
+                            </td>
+                        </tr>
+                    }
+                    @if(!Model?.Any() ?? true)
+                    {
+                        <tr><td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No support tickets.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

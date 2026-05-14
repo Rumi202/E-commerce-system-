@@ -1,0 +1,42 @@
+@model E_commerce_system.Models.User
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="auth-container" style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div class="glass-card" style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; width: 100%; max-width: 450px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+        <h2 style="text-align: center; margin-bottom: 2rem;">Create an Account</h2>
+        
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="color: #ef4444; margin-bottom: 1rem;"></div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label asp-for="Name" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Name</label>
+                <input asp-for="Name" class="form-control" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                <span asp-validation-for="Name" class="text-danger" style="color: #ef4444; font-size: 0.8rem;"></span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label asp-for="Email" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Email</label>
+                <input asp-for="Email" type="email" class="form-control" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                <span asp-validation-for="Email" class="text-danger" style="color: #ef4444; font-size: 0.8rem;"></span>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label asp-for="PasswordHash" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Password</label>
+                <input asp-for="PasswordHash" type="password" class="form-control" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                <span asp-validation-for="PasswordHash" class="text-danger" style="color: #ef4444; font-size: 0.8rem;"></span>
+            </div>
+            
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: black; color: white; border: none; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-top: 1rem;">Sign Up</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+            <p>Already have an account? <a asp-action="Login" style="color: var(--accent); text-decoration: none;">Log in</a></p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,196 @@
+@model E_commerce_system.Models.User
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="page-container" style="max-width: 1000px; margin: 4rem auto; padding: 0 1rem;">
+    <div style="display: grid; grid-template-columns: 320px 1fr; gap: 3rem; align-items: start;">
+        
+        <!-- Profile Card -->
+        <div class="glass-card" style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; box-shadow: var(--shadow-md);">
+            <div style="position: relative; width: 150px; height: 150px; margin: 0 auto 1.5rem auto;">
+                @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                {
+                    <img src="@Model.ProfilePictureUrl" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid #f8fafc; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+                }
+                else
+                {
+                    <div style="width: 100%; height: 100%; background: #f1f5f9; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 4px solid #f8fafc; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <i class="fa-solid fa-user" style="font-size: 4rem; color: #cbd5e1;"></i>
+                    </div>
+                }
+                <div style="position: absolute; bottom: 5px; right: 5px; background: var(--text-primary); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid white; cursor: pointer;">
+                    <i class="fa-solid fa-camera" style="font-size: 0.9rem;"></i>
+                </div>
+            </div>
+
+            <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">@Model.Name</h2>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0 1.5rem 0;">@Model.Email</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; text-align: left; background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid #edf2f7;">
+                <div style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.9rem;">
+                    <i class="fa-solid fa-shield-halved" style="color: var(--text-secondary); width: 20px;"></i>
+                    <span style="color: var(--text-primary); font-weight: 500;">@Model.Role Account</span>
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center; font-size: 0.9rem;">
+                    <i class="fa-solid fa-location-dot" style="color: var(--text-secondary); width: 20px;"></i>
+                    <span style="color: var(--text-primary); font-weight: 500;">@(string.IsNullOrEmpty(Model.Address) ? "No address added" : Model.Address)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="glass-card" style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-md);">
+            <h3 style="margin: 0 0 2rem 0; font-size: 1.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem;">Profile Settings</h3>
+            
+            @if (ViewBag.Message != null)
+            {
+                <div style="background: #dcfce7; color: #166534; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 2rem; border-left: 4px solid #22c55e;">
+                    <i class="fa-solid fa-check-circle"></i> @ViewBag.Message
+                </div>
+            }
+
+            <form asp-action="Profile" method="post" enctype="multipart/form-data">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Full Name</label>
+                        <input asp-for="Name" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm);" required />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Email Address</label>
+                        <input asp-for="Email" class="form-control" style="width: 100%; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm);" required />
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Shipping Address</label>
+                    <textarea asp-for="Address" class="form-control" rows="3" style="width: 100%; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm); font-family: inherit;" placeholder="Your street address, city, and zip code..."></textarea>
+                </div>
+
+                <div style="margin-bottom: 2.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Change Profile Picture</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="file" name="profileImage" accept="image/*" style="border: 1px dashed var(--border-color); padding: 0.5rem; width: 100%; border-radius: var(--radius-sm);" />
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                    <button type="submit" class="btn-primary-small" style="padding: 0.8rem 2.5rem; font-size: 1rem; border: none; cursor: pointer;">Save Changes</button>
+                    <a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: black; background: #f1f5f9; padding: 0.8rem 2rem; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); display: flex; align-items: center; font-weight: 500;">Cancel</a>
+                    <a asp-controller="Account" asp-action="Logout" style="text-decoration: none; color: white; background: #ef4444; padding: 0.8rem 2rem; border: none; border-radius: var(--radius-sm); display: flex; align-items: center; font-weight: 500;"><i class="fa-solid fa-right-from-bracket" style="margin-right: 0.5rem;"></i> Logout</a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- History Sections -->
+    <div style="margin-top: 4rem; display: grid; gap: 3rem;">
+        
+        <!-- Previous Orders -->
+        <div class="glass-card" style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1.5rem;">
+                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Recent Orders</h3>
+                <a asp-controller="Order" asp-action="History" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">View All History <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem;"></i></a>
+            </div>
+            
+            @{
+                var orders = ViewBag.Orders as List<Order>;
+            }
+
+            @if (orders != null && orders.Any())
+            {
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                <th style="padding: 1rem 0.5rem; border-bottom: 2px solid #f1f5f9;">ID</th>
+                                <th style="padding: 1rem 0.5rem; border-bottom: 2px solid #f1f5f9;">Date</th>
+                                <th style="padding: 1rem 0.5rem; border-bottom: 2px solid #f1f5f9;">Amount</th>
+                                <th style="padding: 1rem 0.5rem; border-bottom: 2px solid #f1f5f9;">Status</th>
+                                <th style="padding: 1rem 0.5rem; border-bottom: 2px solid #f1f5f9; text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in orders.Take(5))
+                            {
+                                <tr style="border-bottom: 1px solid #f1f5f9; font-size: 0.95rem;">
+                                    <td style="padding: 1.25rem 0.5rem; font-weight: 700;">#@order.Id</td>
+                                    <td style="padding: 1.25rem 0.5rem; color: var(--text-secondary);">@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                    <td style="padding: 1.25rem 0.5rem; font-weight: 700;">৳@order.TotalAmount</td>
+                                    <td style="padding: 1.25rem 0.5rem;">
+                                        <span style="background: @(order.Status == "Delivered" ? "#dcfce7" : "#fef3c7"); color: @(order.Status == "Delivered" ? "#166534" : "#92400e"); padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.025em;">@order.Status</span>
+                                    </td>
+                                    <td style="padding: 1.25rem 0.5rem; text-align: right;">
+                                        <a asp-controller="Order" asp-action="Details" asp-route-id="@order.Id" style="background: #f1f5f9; color: var(--text-primary); width: 36px; height: 36px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; text-decoration: none; transition: all 0.2s; border: 1px solid #e2e8f0;" title="View Details">
+                                            <i class="fa-solid fa-eye" style="font-size: 0.9rem;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; padding: 4rem 2rem; color: var(--text-secondary); background: #f8fafc; border-radius: var(--radius-lg); border: 1px dashed #cbd5e1;">
+                    <div style="background: white; width: 64px; height: 64px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 1.5rem auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                        <i class="fa-solid fa-box-open" style="font-size: 1.5rem; color: #94a3b8;"></i>
+                    </div>
+                    <p style="margin: 0 0 1.5rem 0; font-weight: 500;">No orders found yet.</p>
+                    <a asp-controller="Home" asp-action="Index" style="text-decoration: none; background: black; color: white; padding: 0.75rem 2rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">Start Shopping</a>
+                </div>
+            }
+        </div>
+
+        <!-- Support Tickets -->
+        <div class="glass-card" style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem; box-shadow: var(--shadow-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 1.5rem;">My Support Tickets</h3>
+                <a asp-controller="Support" asp-action="Create" style="color: white; background: black; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.1);">+ New Ticket</a>
+            </div>
+
+            @{
+                var tickets = ViewBag.Tickets as List<SupportTicket>;
+            }
+
+            @if (tickets != null && tickets.Any())
+            {
+                <div style="display: grid; gap: 1rem;">
+                     @foreach (var ticket in tickets)
+                    {
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #f8fafc; border: 1px solid #edf2f7; border-radius: var(--radius-sm); transition: transform 0.2s; cursor: pointer;" onclick="location.href='@Url.Action("Chat", "Support", new { id = ticket.Id })'">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                                    <h4 style="margin: 0; font-size: 1.1rem;">@ticket.Subject</h4>
+                                </div>
+                                <p style="margin: 0; color: #000000; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;">@ticket.Description</p>
+                                <small style="color: var(--text-secondary); font-size: 0.75rem;">Created on @ticket.CreatedAt.ToShortDateString()</small>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem; margin-left: 2rem;">
+                                <form asp-controller="Support" asp-action="DeleteTicket" method="post" onsubmit="event.stopPropagation(); return confirm('Are you sure you want to delete this support ticket and all its messages?');" style="display: inline;">
+                                    <input type="hidden" name="id" value="@ticket.Id" />
+                                    <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.5rem;" title="Delete Ticket">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                                <div style="color: var(--text-secondary);">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    <i class="fa-solid fa-headset" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>Need help? <a asp-controller="Support" asp-action="Create" style="color: var(--accent);">Create a support ticket.</a></p>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

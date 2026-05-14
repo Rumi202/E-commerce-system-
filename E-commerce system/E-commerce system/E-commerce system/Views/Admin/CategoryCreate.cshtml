@@ -1,0 +1,36 @@
+@model E_commerce_system.Models.Category
+@{
+    ViewData["Title"] = "Create Category";
+}
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: 80vh;">
+    <div class="sidebar" style="background: var(--bg-white); border-right: 1px solid var(--border-color); padding: 2rem 1rem; border-radius: var(--radius-lg);">
+        <h3 style="margin-bottom: 2rem; font-weight: 700;">Admin Panel</h3>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1rem;">
+            <li><a asp-action="Index" style="color: var(--text-secondary); text-decoration: none;"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+            <li><a asp-action="Products" style="color: var(--text-secondary); text-decoration: none;"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li><a asp-action="Categories" style="color: var(--accent-red); text-decoration: none; font-weight: 600;"><i class="fa-solid fa-tags"></i> Categories</a></li>
+            <li><a asp-action="Orders" style="color: var(--text-secondary); text-decoration: none;"><i class="fa-solid fa-cart-arrow-down"></i> Orders</a></li>
+        </ul>
+    </div>
+
+    <div class="dashboard-content" style="padding: 1rem;">
+        <h2 style="margin-bottom: 2rem;">Create Category</h2>
+        
+        <form asp-action="CategoryCreate" method="post" enctype="multipart/form-data" style="background: var(--bg-white); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); max-width: 600px;">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Category Name</label>
+                <input asp-for="Name" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); box-sizing: border-box;" required />
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Category Image</label>
+                <input type="file" name="imageFile" accept="image/*" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); box-sizing: border-box;" required />
+            </div>
+
+            <button type="submit" class="btn-primary-small" style="padding: 0.75rem 2rem; border: none; cursor: pointer;">Save Category</button>
+            <a asp-action="Categories" style="margin-left: 1rem; color: var(--text-secondary); text-decoration: none;">Cancel</a>
+        </form>
+    </div>
+</div>

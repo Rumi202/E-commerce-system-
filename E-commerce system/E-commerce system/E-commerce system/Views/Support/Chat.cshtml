@@ -1,0 +1,102 @@
+@model E_commerce_system.Models.SupportTicket
+@{
+    ViewData["Title"] = "Support Chat";
+}
+
+<div class="chat-wrapper" style="max-width: 900px; margin: 0 auto; height: calc(100vh - 200px); display: flex; flex-direction: column;">
+    <div style="margin-bottom: 1rem;">
+        <a asp-action="Index" style="color: var(--text-secondary); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Back to Support Center</a>
+    </div>
+
+    <div style="background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+        <!-- Chat Header -->
+        <div style="padding: 1.5rem; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);">
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="width: 45px; height: 45px; background: rgba(59, 130, 246, 0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #60a5fa;">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem;">Support Agent</h3>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-secondary);">Ticket #@(Model?.Id ?? 101): @(Model?.Subject ?? "General Inquiry")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat History Area -->
+        <div id="chatHistory" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+            <div style="text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Ticket Created: @Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</div>
+            
+            <!-- Original Description -->
+            <div style="align-self: flex-start; max-width: 75%;">
+                <div style="display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.2rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">You (Initial Description)</span>
+                </div>
+                <div style="background: rgba(0,0,0,0.05); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 16px 16px 16px 0;">
+                    <p style="margin: 0; line-height: 1.5; color: var(--text-primary);">
+                        <strong>Category:</strong> @Model.Category<br/>
+                        @Model.Description
+                    </p>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div style="margin-top: 1rem;">
+                            <img src="@Model.ImageUrl" alt="Ticket Image" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--glass-border);" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Messages != null)
+            {
+                foreach (var msg in Model.Messages.OrderBy(m => m.Timestamp))
+                {
+                    bool isAdmin = msg.IsAdminReply;
+                    <div style="align-self: @(isAdmin ? "flex-start" : "flex-end"); max-width: 75%; position: relative; group">
+                        <div style="display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.2rem; justify-content: @(isAdmin ? "flex-start" : "flex-end");">
+                            @if (isAdmin)
+                            {
+                                <span style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">Support Agent</span>
+                            }
+                            else
+                            {
+                                <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">You</span>
+                            }
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">@msg.Timestamp.ToLocalTime().ToString("hh:mm tt")</span>
+                            
+                            @if (!isAdmin)
+                            {
+                                <form asp-action="DeleteMessage" method="post" style="display: inline;" onsubmit="return confirm('Delete this message?');">
+                                    <input type="hidden" name="messageId" value="@msg.Id" />
+                                    <button type="submit" style="background: none; border: none; color: var(--accent-red); cursor: pointer; font-size: 0.7rem; padding: 0 0.2rem;" title="Delete Message">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                        <div style="background: @(isAdmin ? "rgba(0,0,0,0.05)" : "rgba(0,0,0,0.08)"); border: 1px solid var(--glass-border); padding: 1rem; border-radius: @(isAdmin ? "16px 16px 16px 0" : "16px 16px 0 16px");">
+                            <p style="margin: 0; line-height: 1.5; color: #000000;">@msg.Message</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Chat Input Area -->
+        <div style="padding: 1.5rem; border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.1);">
+            <form asp-action="SendMessage" method="post" style="display: flex; gap: 1rem; position: relative;">
+                <input type="hidden" name="ticketId" value="@Model.Id" />
+                <input type="text" name="message" class="form-control" placeholder="Type your message..." style="flex: 1; padding: 1rem 1.5rem; border-radius: 25px; border: 1px solid var(--glass-border); background: white; color: var(--text-primary);" autocomplete="off" required />
+                <button type="submit" class="btn-primary" style="padding: 0 1.5rem; border-radius: 25px; background: #000000; color: white; border: none; flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: 0.5rem; cursor: pointer; transition: transform 0.2s; font-weight: 600;">
+                    <span>Send Message</span> <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Scroll to bottom of chat history
+        const history = document.getElementById("chatHistory");
+        history.scrollTop = history.scrollHeight;
+    </script>
+}

@@ -1,0 +1,175 @@
+@model E_commerce_system.Models.Product
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="page-wrapper" style="border-radius: var(--radius-lg); margin-top: 2rem; background: var(--bg-white);">
+    
+    <div style="display: flex; gap: 3rem; margin-bottom: 3rem;">
+        <!-- Left Side: Product Image -->
+        <div style="flex: 1; background: var(--bg-main); border-radius: var(--radius-md); display: flex; justify-content:center; align-items:center; min-height: 500px; position:relative; overflow:hidden;">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: contain;" />
+            }
+            else
+            {
+                <i class="fa-solid fa-shirt" style="font-size: 8rem; color: #9ca3af;"></i>
+            }
+        </div>
+
+        <!-- Right Side: Product Info -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <div style="margin-bottom: 0.5rem;">
+                <span style="background: var(--bg-main); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">@Model.Category?.Name</span>
+                @if (Model.Gender != null)
+                {
+                    <span style="margin-left: 0.5rem; background: var(--bg-main); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">@Model.Gender</span>
+                }
+            </div>
+            
+            <h1 style="font-size: 2rem; font-weight: 700; margin: 0 0 1rem 0; color: var(--text-primary);">@Model.Name</h1>
+            
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border-color);">
+                @if (Model.IsFlashSale && Model.DiscountPercentage > 0)
+                {
+                    <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem;">
+                        <span style="font-size: 2.5rem; font-weight: 800; color: var(--accent-red);">৳@Model.DiscountedPrice.ToString("N0")</span>
+                        <span style="font-size: 1.2rem; color: var(--text-secondary); text-decoration: line-through;">৳@Model.Price.ToString("N0")</span>
+                        <span style="background: var(--accent-red); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.9rem; font-weight: 700;">-@Model.DiscountPercentage%</span>
+                    </div>
+                }
+                else
+                {
+                    <div style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">৳@Model.Price.ToString("N0")</div>
+                }
+
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="background: @(Model.StockQuantity > 0 ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)"); color: @(Model.StockQuantity > 0 ? "#059669" : "#dc2626"); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; font-size: 0.85rem; border: 1px solid @(Model.StockQuantity > 0 ? "rgba(16, 185, 129, 0.2)" : "rgba(239, 68, 68, 0.2)");">
+                        <i class="fa-solid @(Model.StockQuantity > 0 ? "fa-circle-check" : "fa-circle-xmark")" style="margin-right: 0.25rem;"></i>
+                        @(Model.StockQuantity > 0 ? $"{Model.StockQuantity} In Stock" : "Currently Out of Stock")
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                @if (Model.StockQuantity > 0)
+                {
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" style="width: 100%; padding: 1.2rem; font-size: 1.1rem; border-radius: var(--radius-md); background: black; color: white; border: none; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.75rem; transition: transform 0.2s;">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <button disabled style="width: 100%; padding: 1.2rem; font-size: 1.1rem; border-radius: var(--radius-md); background: #cbd5e1; color: #64748b; border: none; font-weight: 700; cursor: not-allowed;">
+                        Out of Stock
+                    </button>
+                }
+            </div>
+
+            <div style="display: flex; gap: 2rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.95rem; color: var(--text-secondary);">
+                <span id="wishlistBtn" onclick="addToWishlist(@Model.Id)" style="cursor:pointer; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s;">
+                    <i class="fa-regular fa-heart"></i> Add to Wishlist
+                </span>
+                <span onclick="toggleShareMenu()" style="cursor:pointer; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s;">
+                    <i class="fa-solid fa-share-nodes"></i> Share Product
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; backdrop-filter: blur(4px); justify-content:center; align-items:center;">
+        <div style="background:white; padding:2rem; border-radius:24px; width:90%; max-width:400px; position:relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+            <button onclick="toggleShareMenu()" style="position:absolute; top:1.25rem; right:1.25rem; border:none; background:#f1f5f9; width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#64748b;"><i class="fa-solid fa-xmark"></i></button>
+            
+            <h3 style="margin-top:0; margin-bottom:0.5rem; font-size: 1.5rem; font-weight: 700; text-align:center; color: var(--text-primary);">Share Product</h3>
+            <p style="text-align:center; color: var(--text-secondary); margin-bottom:2rem; font-size: 0.9rem;">Spread the word about this amazing find!</p>
+            
+            @{
+                var currentUrl = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetDisplayUrl(Context.Request);
+                var shareText = $"Check out this {Model.Name} on our store!";
+            }
+
+            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1.25rem;">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(currentUrl)" target="_blank" style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; text-decoration:none; color:#1877F2; padding:1.25rem; background:#f0f7ff; border-radius:16px; transition: transform 0.2s;">
+                    <i class="fa-brands fa-facebook" style="font-size:2.5rem;"></i>
+                    <span style="font-weight:600; font-size:0.9rem;">Facebook</span>
+                </a>
+                <a href="fb-messenger://share/?link=@Uri.EscapeDataString(currentUrl)" target="_blank" style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; text-decoration:none; color:#00B2FF; padding:1.25rem; background:#f0f9ff; border-radius:16px; transition: transform 0.2s;">
+                    <i class="fa-brands fa-facebook-messenger" style="font-size:2.5rem;"></i>
+                    <span style="font-weight:600; font-size:0.9rem;">Messenger</span>
+                </a>
+                <a href="https://wa.me/?text=@Uri.EscapeDataString($"{shareText} {currentUrl}")" target="_blank" style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; text-decoration:none; color:#25D366; padding:1.25rem; background:#f0fff4; border-radius:16px; transition: transform 0.2s;">
+                    <i class="fa-brands fa-whatsapp" style="font-size:2.5rem;"></i>
+                    <span style="font-weight:600; font-size:0.9rem;">WhatsApp</span>
+                </a>
+                <a href="https://t.me/share/url?url=@Uri.EscapeDataString(currentUrl)&text=@Uri.EscapeDataString(shareText)" target="_blank" style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; text-decoration:none; color:#24A1DE; padding:1.25rem; background:#f0faff; border-radius:16px; transition: transform 0.2s;">
+                    <i class="fa-brands fa-telegram" style="font-size:2.5rem;"></i>
+                    <span style="font-weight:600; font-size:0.9rem;">Telegram</span>
+                </a>
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.8rem; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">@currentUrl</span>
+                <button onclick="copyToClipboard('@currentUrl')" style="background: white; border: 1px solid #cbd5e1; padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-regular fa-copy"></i> Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleShareMenu() {
+            const modal = document.getElementById('shareModal');
+            modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        async function addToWishlist(productId) {
+            try {
+                const response = await fetch('/Wishlist/AddToWishlist?productId=' + productId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const btn = document.getElementById('wishlistBtn');
+                    btn.innerHTML = '<i class="fa-solid fa-heart" style="color: #ef4444;"></i> Added to Wishlist';
+                    btn.style.color = '#ef4444';
+                    alert(data.message);
+                } else {
+                    alert(data.message);
+                    if (data.message.includes('login')) {
+                        window.location.href = '/Account/Login';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again.');
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Link copied to clipboard!');
+            });
+        }
+    </script>
+
+    <!-- Product Description Section -->
+    <div style="margin-top: 4rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; border-bottom: 2px solid black; display: inline-block; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Product Description</h2>
+        <div style="background: #f8fafc; padding: 2rem; border-radius: 16px; border: 1px solid var(--border-color);">
+            <p style="color: var(--text-primary); line-height: 1.8; margin: 0; font-size: 1.05rem; white-space: pre-line;">
+                @Model.Description
+            </p>
+        </div>
+    </div>
+</div>

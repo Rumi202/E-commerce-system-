@@ -1,0 +1,21 @@
+@model E_commerce_system.Models.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div style="text-align: center; padding: 5rem 1rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid border: var(--glass-border); margin: 2rem auto; max-width: 600px;">
+    <i class="fa-solid fa-triangle-exclamation" style="font-size: 5rem; color: #ef4444; margin-bottom: 1.5rem;"></i>
+    <h1 style="margin-bottom: 1rem; color: var(--text-primary);">Oops! Something went wrong.</h1>
+    <h2 style="color: var(--text-secondary); font-weight: 400; font-size: 1.25rem; margin-bottom: 2rem;">An error occurred while processing your request.</h2>
+
+    @if (Model?.ShowRequestId ?? false)
+    {
+        <p style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; display: inline-block; font-family: monospace;">
+            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        </p>
+    }
+
+    <div style="margin-top: 3rem;">
+        <a asp-controller="Home" asp-action="Index" class="btn-primary" style="padding: 1rem 2rem; border-radius: 8px; background: var(--accent); color: white; text-decoration: none; font-weight: 600;">Return to Home</a>
+    </div>
+</div>

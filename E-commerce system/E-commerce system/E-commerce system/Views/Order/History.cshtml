@@ -1,0 +1,41 @@
+@model IEnumerable<E_commerce_system.Models.Order>
+@{
+    ViewData["Title"] = "Order History";
+}
+
+<div class="orders-container" style="max-width: 1000px; margin: 4rem auto; padding: 0 1rem;">
+    <div style="margin-bottom: 2rem;">
+        <a asp-controller="Account" asp-action="Profile" style="color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-weight: 500;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Profile
+        </a>
+    </div>
+    <h2 style="margin-bottom: 2rem; font-size: 2rem; font-weight: 800;">My Order History</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        @foreach (var order in Model ?? new List<E_commerce_system.Models.Order>())
+        {
+            <div class="order-card" style="background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border); padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0 0 0.5rem 0;">Order <span style="color: var(--accent);">#@order.Id</span></h3>
+                    <p style="color: var(--text-secondary); margin: 0;">Placed on @order.OrderDate.ToShortDateString()</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 1.25rem; font-weight: 700; margin: 0 0 0.5rem 0;">৳@order.TotalAmount</p>
+                    <span style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.85rem;">@order.Status</span>
+                </div>
+                <div>
+                    <a asp-action="Details" asp-route-id="@order.Id" style="padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--accent); color: white; text-decoration: none; transition: background 0.3s;">View Details</a>
+                </div>
+            </div>
+        }
+        
+        @if(!Model?.Any() ?? true)
+        {
+            <div style="text-align: center; padding: 4rem; background: var(--glass-bg); border-radius: 12px; border: 1px solid var(--glass-border);">
+                <i class="fa-solid fa-box-open" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                <p style="color: var(--text-secondary);">You haven't placed any orders yet.</p>
+                <a asp-controller="Product" asp-action="Index" style="color: var(--accent); text-decoration: none;">Start Shopping</a>
+            </div>
+        }
+    </div>
+</div>

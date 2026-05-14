@@ -1,0 +1,27 @@
+@model E_commerce_system.Models.SupportTicket
+@{
+    ViewData["Title"] = "Ticket Details";
+}
+
+<div style="max-width: 800px; margin: 0 auto; padding: 2rem 0;">
+    <a asp-action="Index" style="color: var(--text-secondary); text-decoration: none; display: inline-block; margin-bottom: 2rem;"><i class="fa-solid fa-arrow-left"></i> Back to Support Center</a>
+    
+    <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+        <div style="border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <h2 style="margin: 0;">Ticket #@(Model?.Id ?? 0)</h2>
+                <span style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; padding: 0.3rem 0.8rem; border-radius: 4px; font-weight: 600;">@(Model?.Status ?? "Open")</span>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;"><i class="fa-regular fa-clock"></i> Opened on @(Model?.CreatedAt.ToShortDateString() ?? DateTime.Now.ToShortDateString())</p>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h3 style="color: var(--text-secondary); font-size: 1rem; margin-bottom: 0.5rem;">Subject</h3>
+            <p style="font-size: 1.25rem; font-weight: 500; margin: 0;">@(Model?.Subject ?? "No Subject Provided")</p>
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            <a asp-action="Chat" asp-route-id="@(Model?.Id ?? 0)" class="btn-primary" style="flex: 1; text-align: center; padding: 0.75rem; border-radius: 8px; background: var(--accent); color: white; text-decoration: none; font-weight: 600;"><i class="fa-solid fa-comments"></i> Enter Chat</a>
+        </div>
+    </div>
+</div>

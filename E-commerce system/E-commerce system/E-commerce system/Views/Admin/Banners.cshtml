@@ -1,0 +1,56 @@
+@model IEnumerable<E_commerce_system.Models.Banner>
+@{
+    ViewData["Title"] = "Manage Banners";
+}
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: 80vh;">
+    <partial name="_AdminSidebar" />
+    
+    <div class="dashboard-content" style="padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin: 0; color: black;">Banners</h2>
+            <a asp-action="BannerCreate" class="btn-primary-small" style="background: var(--accent-green);">+ Add New Banner</a>
+        </div>
+
+        <div style="background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: rgba(0,0,0,0.3);">
+                    <tr>
+                        <th style="padding: 1rem;">Preview</th>
+                        <th style="padding: 1rem;">Title</th>
+                        <th style="padding: 1rem;">Order</th>
+                        <th style="padding: 1rem;">Active</th>
+                        <th style="padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr style="border-top: 1px solid var(--glass-border);">
+                            <td style="padding: 1rem;">
+                                <img src="@item.ImageUrl" style="width: 100px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                            </td>
+                            <td style="padding: 1rem; color: black;">@item.Title</td>
+                            <td style="padding: 1rem; color: black;">@item.DisplayOrder</td>
+                            <td style="padding: 1rem;">
+                                <span style="color: @(item.IsActive ? "#10b981" : "#ef4444")">
+                                    @(item.IsActive ? "Yes" : "No")
+                                </span>
+                            </td>
+                            <td style="padding: 1rem; display: flex; gap: 1rem;">
+                                <a asp-action="BannerEdit" asp-route-id="@item.Id" style="color: var(--accent-dark);"><i class="fa-solid fa-pen"></i></a>
+                                <form asp-action="BannerDelete" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                    <button type="submit" style="background:none; border:none; padding:0; color: var(--accent-red); cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                    @if(!Model.Any())
+                    {
+                        <tr><td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No banners available.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

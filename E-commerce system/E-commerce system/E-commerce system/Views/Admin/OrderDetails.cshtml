@@ -1,0 +1,84 @@
+@model E_commerce_system.Models.Order
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: 80vh;">
+    <partial name="_AdminSidebar" />
+    
+    <div class="dashboard-content" style="padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin: 0;">Order #@Model.Id Details</h2>
+            <a asp-action="Orders" class="btn-primary-small" style="background: var(--text-secondary); text-decoration: none;">Back to Orders</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <!-- Customer Info -->
+            <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">Customer Information</h3>
+                <p style="margin: 0.5rem 0;"><strong>Name:</strong> @(Model.User?.Name ?? "N/A")</p>
+                <p style="margin: 0.5rem 0;"><strong>Email:</strong> @(Model.User?.Email ?? "N/A")</p>
+                <p style="margin: 0.5rem 0;"><strong>Shipping Address:</strong><br />@Model.ShippingAddress</p>
+            </div>
+
+            <!-- Order Info -->
+            <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--text-primary); font-size: 1.2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">Order Status</h3>
+                <p style="margin: 0.5rem 0;"><strong>Date:</strong> @Model.OrderDate.ToString("f")</p>
+                <p style="margin: 0.5rem 0;"><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+                <p style="margin: 0.5rem 0;"><strong>Current Status:</strong> 
+                    <span style="background: rgba(245, 158, 11, 0.2); color: #fcd34d; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">@Model.Status</span>
+                </p>
+
+                <form asp-action="UpdateOrderStatus" method="post" style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    <select name="status" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); background: white; color: black; flex: 1;">
+                        <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                        <option value="Shipped" selected="@(Model.Status == "Shipped")">Shipped</option>
+                        <option value="Delivered" selected="@(Model.Status == "Delivered")">Delivered</option>
+                    </select>
+                    <button type="submit" style="padding: 0.5rem 1rem; background: black; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">Update</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div style="background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: rgba(0,0,0,0.3);">
+                    <tr>
+                        <th style="padding: 1rem;">Product</th>
+                        <th style="padding: 1rem;">Quantity</th>
+                        <th style="padding: 1rem;">Unit Price</th>
+                        <th style="padding: 1rem;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr style="border-top: 1px solid var(--glass-border);">
+                            <td style="padding: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    @if (!string.IsNullOrEmpty(item.Product?.ImageUrl))
+                                    {
+                                        <img src="@item.Product.ImageUrl" style="width: 40px; height: 40px; border-radius: 4px; object-fit: cover;" />
+                                    }
+                                    <span>@(item.Product?.Name ?? "Deleted Product")</span>
+                                </div>
+                            </td>
+                            <td style="padding: 1rem;">@item.Quantity</td>
+                            <td style="padding: 1rem;">৳@item.UnitPrice</td>
+                            <td style="padding: 1rem;">৳@(item.Quantity * item.UnitPrice)</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot style="background: rgba(0,0,0,0.2); font-weight: bold;">
+                    <tr>
+                        <td colspan="3" style="padding: 1rem; text-align: right;">Total Amount:</td>
+                        <td style="padding: 1rem;">৳@Model.TotalAmount</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>

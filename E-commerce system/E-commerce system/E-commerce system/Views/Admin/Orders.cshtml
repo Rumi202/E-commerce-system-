@@ -1,0 +1,48 @@
+@model IEnumerable<E_commerce_system.Models.Order>
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+
+<div style="display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: 80vh;">
+    <partial name="_AdminSidebar" />
+    
+    <div class="dashboard-content" style="padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin: 0;">Orders</h2>
+        </div>
+        
+        <div style="background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead style="background: rgba(0,0,0,0.3);">
+                    <tr>
+                        <th style="padding: 1rem;">Order ID</th>
+                        <th style="padding: 1rem;">Customer</th>
+                        <th style="padding: 1rem;">Total Amount</th>
+                        <th style="padding: 1rem;">Status</th>
+                        <th style="padding: 1rem;">Date</th>
+                        <th style="padding: 1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model ?? new List<E_commerce_system.Models.Order>())
+                    {
+                        <tr style="border-top: 1px solid var(--glass-border);">
+                            <td style="padding: 1rem;">#@item.Id</td>
+                            <td style="padding: 1rem;">@(item.User?.Name ?? item.UserId.ToString())</td>
+                            <td style="padding: 1rem;">৳@item.TotalAmount</td>
+                            <td style="padding: 1rem;"><span style="background: rgba(245, 158, 11, 0.2); color: #fcd34d; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">@item.Status</span></td>
+                            <td style="padding: 1rem;">@item.OrderDate.ToShortDateString()</td>
+                            <td style="padding: 1rem;">
+                                <a asp-action="OrderDetails" asp-route-id="@item.Id" style="color: var(--accent); text-decoration: none;"><i class="fa-solid fa-eye"></i> View</a>
+                            </td>
+                        </tr>
+                    }
+                    @if(!Model?.Any() ?? true)
+                    {
+                        <tr><td colspan="6" style="padding: 2rem; text-align: center; color: var(--text-secondary);">No orders found.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="checkout-container" style="max-width: 800px; margin: 0 auto;">
+    <h2 style="margin-bottom: 2rem;">Checkout</h2>
+
+    <div style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+        <form asp-controller="Order" asp-action="PlaceOrder" method="post">
+            <h3 style="margin-bottom: 1.5rem;">Shipping Information</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">First Name</label>
+                    <input type="text" class="form-control" placeholder="John" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Last Name</label>
+                    <input type="text" class="form-control" placeholder="Doe" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Address</label>
+                    <input type="text" name="ShippingAddress" class="form-control" placeholder="123 Street Name, City" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; border-radius: 8px; background: #000000; color: white; border: none; font-weight: 600; font-size: 1.1rem; cursor: pointer; transition: background 0.3s; margin-top: 1rem;">Proceed to Payment</button>
+        </form>
+    </div>
+</div>

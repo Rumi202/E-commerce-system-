@@ -1,0 +1,55 @@
+@model E_commerce_system.Models.Banner
+@{
+    ViewData["Title"] = "Edit Banner";
+}
+
+<div style="max-width: 800px; margin: 2rem auto; background: var(--glass-bg); padding: 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+    <h2 style="margin-bottom: 2rem; color: black;">Edit Banner</h2>
+    
+    <form asp-action="BannerEdit" method="post" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div asp-validation-summary="All" style="color: var(--accent-red); list-style: none; padding: 0;"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ImageUrl" />
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-weight: 600; color: black;">Title</label>
+            <input asp-for="Title" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); background: white; color: black;" />
+            <span asp-validation-for="Title" style="color: var(--accent-red); font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-weight: 600; color: black;">Subtitle</label>
+            <input asp-for="Subtitle" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); background: white; color: black;" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-weight: 600; color: black;">Target URL</label>
+            <input asp-for="TargetUrl" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); background: white; color: black;" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-weight: 600; color: black;">Display Order</label>
+            <input asp-for="DisplayOrder" type="number" style="padding: 0.8rem; border-radius: 8px; border: 1px solid var(--border-color); background: white; color: black;" />
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <label style="font-weight: 600; color: black;">Change Banner Image (optional)</label>
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" style="width: 200px; border-radius: 8px; margin-bottom: 0.5rem;" />
+            }
+            <input type="file" name="imageFile" style="padding: 0.8rem; border: 1px dashed var(--border-color); border-radius: 8px; background: white; color: black;" />
+            <span asp-validation-for="ImageUrl" style="color: var(--accent-red); font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <input asp-for="IsActive" type="checkbox" style="width: 20px; height: 20px;" />
+            <label style="font-weight: 600; color: black;">Is Active</label>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <button type="submit" style="padding: 0.8rem 2rem; background: black; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Update Banner</button>
+            <a asp-action="Banners" style="padding: 0.8rem 2rem; background: black; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; text-align: center;">Cancel</a>
+        </div>
+    </form>
+</div>

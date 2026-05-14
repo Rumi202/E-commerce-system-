@@ -1,0 +1,46 @@
+@model E_commerce_system.Models.Order
+
+@{
+    ViewData["Title"] = "Order Success";
+}
+
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div style="background: var(--glass-bg); padding: 4rem 2rem; border-radius: 16px; border: 1px solid var(--glass-border); text-align: center; max-width: 600px; width: 100%;">
+        <div style="width: 100px; height: 100px; background: rgba(16, 185, 129, 0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 2rem auto;">
+            <i class="fa-solid fa-check" style="font-size: 3rem; color: #10b981;"></i>
+        </div>
+        <h2 style="margin-bottom: 1rem; color: #10b981;">Order Confirmed!</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Thank you for your purchase. Your order has been placed and confirmed successfully.</p>
+        
+        <div style="background: rgba(0,0,0,0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); text-align: left;">
+            <p style="margin: 0 0 1rem 0; font-size: 1.1rem; text-align: center;">Order Reference: <strong style="color: black;">#@Model.Id</strong></p>
+            
+            <h4 style="margin-bottom: 1rem; color: black; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Order Details</h4>
+            <div style="margin-bottom: 1rem;">
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-secondary);">
+                        <span>@item.Product?.Name x @item.Quantity</span>
+                        <span>BDT @((item.Quantity * item.UnitPrice).ToString("N2"))</span>
+                    </div>
+                }
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; border-top: 1px solid var(--border-color); padding-top: 1rem; color: black;">
+                <span>Total Amount:</span>
+                <span>BDT @Model.TotalAmount.ToString("N2")</span>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <a asp-action="DownloadInvoice" asp-route-id="@Model.Id" class="btn-primary" style="padding: 1rem 2rem; border-radius: 12px; background: #dc2626; color: white; text-decoration: none; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s;">
+                <i class="fa-solid fa-file-pdf"></i> Download Invoice (PDF)
+            </a>
+            <a asp-action="History" class="btn-primary" style="padding: 1rem 2rem; border-radius: 12px; background: black; color: white; text-decoration: none; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="fa-solid fa-list-check"></i> View Order History
+            </a>
+            <a asp-controller="Home" asp-action="Index" style="padding: 1rem 2rem; border-radius: 12px; background: transparent; color: black; text-decoration: none; font-weight: 600; border: 2px solid black; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.2s;">
+                <i class="fa-solid fa-house"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>

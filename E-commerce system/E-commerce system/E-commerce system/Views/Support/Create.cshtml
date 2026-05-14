@@ -1,0 +1,54 @@
+@model E_commerce_system.Models.SupportTicket
+@{
+    ViewData["Title"] = "Open New Ticket";
+}
+
+<div style="max-width: 600px; margin: 0 auto; padding: 2rem 0;">
+    <div style="margin-bottom: 2rem;">
+        <a asp-action="Index" style="color: var(--text-secondary); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Back to Support Center</a>
+    </div>
+
+    <div class="glass-card" style="background: var(--glass-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+        <h2 style="margin-bottom: 0.5rem; text-align: center;">How can we help?</h2>
+        <p style="color: var(--text-secondary); text-align: center; margin-bottom: 2rem;">Please provide a subject for your ticket so we can route it to the right department.</p>
+        
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="color: #ef4444; margin-bottom: 1rem;"></div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label asp-for="Subject" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Ticket Subject</label>
+                <input asp-for="Subject" class="form-control" placeholder="e.g. Issue with order #1052" required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box;" />
+                <span asp-validation-for="Subject" class="text-danger" style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 0.25rem;"></span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label asp-for="Category" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Category</label>
+                <select asp-for="Category" class="form-control" style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,1); color: white; box-sizing: border-box; cursor: pointer;">
+                    <option value="Product Information">Product Information</option>
+                    <option value="Technical">Technical Issue</option>
+                    <option value="Billing">Billing & Pricing</option>
+                    <option value="Shipping">Shipping & Delivery</option>
+                    <option value="Others">Others</option>
+                </select>
+                <span asp-validation-for="Category" class="text-danger" style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 0.25rem;"></span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label asp-for="Description" style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Detailed Description</label>
+                <textarea asp-for="Description" class="form-control" rows="5" placeholder="Please describe your issue in detail..." required style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box; font-family: inherit;"></textarea>
+                <span asp-validation-for="Description" class="text-danger" style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 0.25rem;"></span>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-weight: 500;">Attach Image (Optional)</label>
+                <input type="file" name="ticketImage" accept="image/*" class="form-control" style="width: 100%; padding: 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; box-sizing: border-box; cursor: pointer;" />
+            </div>
+            
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; border-radius: 8px; background: #000000; color: white; border: none; font-weight: 600; cursor: pointer; transition: background 0.3s; margin-top: 1rem; font-size: 1.1rem;">Submit Ticket</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

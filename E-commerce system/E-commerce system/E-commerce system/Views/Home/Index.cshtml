@@ -1,0 +1,443 @@
+@model E_commerce_system.Models.HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="page-wrapper" style="border-radius: var(--radius-lg); margin-top: 2rem;">
+    <!-- Banner Carousel -->
+    @if (Model.Banners != null && Model.Banners.Any())
+    {
+        <div class="carousel-container" style="position: relative; overflow: hidden; border-radius: var(--radius-lg); height: 400px; margin-bottom: 2rem; background: #f8f9fa;">
+            <div class="carousel-track" style="display: flex; height: 100%; transition: transform 0.5s ease-in-out;">
+                @foreach (var banner in Model.Banners)
+                {
+                    <div class="carousel-slide" style="min-width: 100%; position: relative;">
+                        <img src="@banner.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(0,0,0,0.6), transparent); display: flex; align-items: center; padding: 4rem; color: white;">
+                            <div style="max-width: 500px;">
+                                @if (!string.IsNullOrEmpty(banner.Title))
+                                {
+                                    <h1 style="font-size: 3rem; margin-bottom: 1rem; line-height: 1.2;">@banner.Title</h1>
+                                }
+                                @if (!string.IsNullOrEmpty(banner.Subtitle))
+                                {
+                                    <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">@banner.Subtitle</p>
+                                }
+                                @if (!string.IsNullOrEmpty(banner.TargetUrl))
+                                {
+                                    <a href="@banner.TargetUrl" style="display: inline-block; padding: 1rem 2rem; background: white; color: black; text-decoration: none; border-radius: 30px; font-weight: 700; transition: transform 0.2s;">Shop Now</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <button id="carousel-prev" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button id="carousel-next" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <!-- Indicators -->
+            <div style="position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem;">
+                @for (int i = 0; i < Model.Banners.Count(); i++)
+                {
+                    <div class="carousel-indicator" data-index="@i" style="width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: background 0.3s;"></div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Fallback Hero Section if no banners -->
+        <div style="background: linear-gradient(to right, #f8f9fa, #e9ecef); border-radius: var(--radius-lg); padding: 3rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+            <div>
+                <span style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 500;">#Big Fashion Sale</span>
+                <h1 style="font-size: 3rem; margin: 0.5rem 0; color: var(--text-primary); line-height: 1.2;">Limited Time Offer!<br />Up to <span style="color: var(--text-primary);">50% OFF!</span></h1>
+                <p style="color: var(--text-secondary);">Redefine Your Everyday Style</p>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <div style="width: 120px; height: 160px; background: #e5e7eb; border-radius: var(--radius-sm); transform: rotate(-5deg);"></div>
+                <div style="width: 120px; height: 160px; background: #d1d5db; border-radius: var(--radius-sm); z-index: 1;"></div>
+                <div style="width: 120px; height: 160px; background: #4b5563; border-radius: var(--radius-sm); transform: rotate(5deg);"></div>
+            </div>
+        </div>
+    }
+
+    <!-- Categories Row -->
+    <div style="display: flex; gap: 2rem; padding: 1rem 0; margin-bottom: 3rem; border-bottom: 1px solid var(--border-color); overflow-x: auto;">
+        @foreach(var cat in Model.Categories)
+        {
+            <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@cat.Id" asp-route-gender="@Model.SelectedGender" style="text-align: center; cursor: pointer; min-width: 80px; text-decoration: none; color: inherit;">
+                <div style="width: 60px; height: 60px; background: var(--bg-main); border-radius: 50%; margin: 0 auto 0.5rem auto; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid @(ViewBag.SelectedCategoryId == cat.Id ? "var(--text-primary)" : "var(--border-color)"); box-shadow: @(ViewBag.SelectedCategoryId == cat.Id ? "0 0 10px rgba(0,0,0,0.1)" : "none");">
+                    @if(!string.IsNullOrEmpty(cat.ImageUrl))
+                    {
+                        <img src="@cat.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-tags" style="color: var(--text-secondary);"></i>
+                    }
+                </div>
+                <span style="font-size: 0.85rem; font-weight: @(ViewBag.SelectedCategoryId == cat.Id ? "700" : "500");">@cat.Name</span>
+            </a>
+        }
+        <a asp-controller="Product" asp-action="Index" asp-route-gender="@Model.SelectedGender" style="text-align: center; cursor: pointer; min-width: 80px; text-decoration: none; color: inherit;">
+             <div style="width: 60px; height: 60px; border: 1px solid @(ViewBag.SelectedCategoryId == null ? "var(--text-primary)" : "var(--border-color)"); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 0.5rem auto;">
+                <i class="fa-solid fa-table-cells-large" style="color: var(--text-primary);"></i>
+            </div>
+            <span style="font-size: 0.85rem; font-weight: @(ViewBag.SelectedCategoryId == null ? "700" : "600");">All Category</span>
+        </a>
+    </div>
+
+    @if (ViewBag.SelectedCategoryName != null || !string.IsNullOrEmpty(Model.SelectedGender))
+    {
+        <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
+            <h2 style="margin: 0; font-size: 1.5rem; color: var(--text-primary);">
+                Filters: @(ViewBag.SelectedCategoryName ?? "All Categories") @(!string.IsNullOrEmpty(Model.SelectedGender) ? " > " + Model.SelectedGender : "")
+            </h2>
+            <a asp-action="Index" style="font-size: 0.9rem; color: var(--accent-red); text-decoration: none;">Clear Filters &times;</a>
+        </div>
+    }
+
+    <!-- Flash Sale -->
+    @if (Model?.FlashSaleProducts != null && Model.FlashSaleProducts.Any())
+    {
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-bolt" style="color: var(--text-primary);"></i> Flash Sale
+                </h2>
+                @if (Model.GlobalFlashSaleEndTime.HasValue)
+                {
+                    <div style="display: flex; gap: 0.25rem;" id="flash-sale-timer" data-endtime="@Model.GlobalFlashSaleEndTime.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                        <span id="fs-hours" style="background: var(--accent-red); color: white; padding: 0.2rem 0.4rem; border-radius: 4px; font-weight: bold;">00</span><span style="color: var(--accent-red); font-weight: bold;">:</span>
+                        <span id="fs-minutes" style="background: var(--accent-red); color: white; padding: 0.2rem 0.4rem; border-radius: 4px; font-weight: bold;">00</span><span style="color: var(--accent-red); font-weight: bold;">:</span>
+                        <span id="fs-seconds" style="background: var(--accent-red); color: white; padding: 0.2rem 0.4rem; border-radius: 4px; font-weight: bold;">00</span>
+                    </div>
+                }
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid black; background: black; color: white; cursor: pointer;"><i class="fa-solid fa-chevron-left"></i></button>
+                <button style="width: 32px; height: 32px; border-radius: 50%; border: none; background: #333333; color: white; cursor: pointer;"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 4rem;">
+            @foreach (var product in Model.FlashSaleProducts)
+            {
+                <div class="product-card" style="padding: 1rem; position: relative;">
+                    <div style="position: absolute; top: 1rem; left: 1rem; background: var(--accent-red); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; z-index: 2;">
+                        -@product.DiscountPercentage%
+                    </div>
+                    <button onclick="addToWishlist(@product.Id)" style="position: absolute; top: 1rem; right: 1rem; background: black; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; box-shadow: var(--shadow-sm); z-index: 2; cursor:pointer;">
+                        <i class="fa-regular fa-heart" style="color: white;"></i>
+                    </button>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="text-decoration: none; color: inherit;">
+                        <div style="height: 180px; background: var(--bg-main); border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" alt="@product.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-image" style="font-size: 3rem; color: #d1d5db;"></i>
+                            }
+                        </div>
+                        <h3 style="font-size: 0.95rem; font-weight: 600; margin: 0 0 0.5rem 0; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">@product.Name</h3>
+                    </a>
+                    <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span style="font-size: 1.1rem; font-weight: 700; color: var(--accent-red);">৳@(product.DiscountedPrice.ToString("N0"))</span>
+                        <span style="font-size: 0.85rem; color: var(--text-secondary); text-decoration: line-through;">৳@(product.Price.ToString("N0"))</span>
+                    </div>
+                    <div style="font-size: 0.75rem; color: @(product.StockQuantity > 0 ? "var(--accent-green)" : "var(--accent-red)"); font-weight: 600; margin-bottom: 0.5rem;">
+                        @(product.StockQuantity > 0 ? $"{product.StockQuantity} in stock" : "Out of stock")
+                    </div>
+                    <!-- Progress bar -->
+                    <div style="width: 100%; height: 6px; background: #fee2e2; border-radius: 3px; margin: 0.5rem 0; overflow: hidden;">
+                        <div style="width: 75%; height: 100%; background: var(--accent-red); border-radius: 3px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-secondary);">
+                        <span>Trending</span>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" style="display: inline;">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                @if (product.StockQuantity > 0)
+                                {
+                                    <button type="submit" style="background: none; border: 1px solid var(--text-primary); color: var(--text-primary); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: 600;">+ Cart</button>
+                                }
+                                else
+                                {
+                                    <button type="button" disabled style="background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; cursor: not-allowed; font-weight: 600; opacity: 0.5;">Stock Out</button>
+                                }
+                            </form>
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="color: var(--text-primary); text-decoration: none; font-weight: 600;">Details ></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- bann Selling Products -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; font-size: 1.5rem;">Best Selling</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 4rem;">
+        @foreach (var product in Model?.BestSellingProducts ?? new List<E_commerce_system.Models.Product>())
+        {
+            <div class="product-card" style="padding: 1rem; position: relative;">
+                <button onclick="addToWishlist(@product.Id)" style="position: absolute; top: 1rem; right: 1rem; background: black; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; box-shadow: var(--shadow-sm); z-index: 2; cursor:pointer;">
+                    <i class="fa-regular fa-heart" style="color: var(--accent-red);"></i>
+                </button>
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="text-decoration: none; color: inherit;">
+                    <div style="height: 180px; background: var(--bg-main); border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            <img src="@product.ImageUrl" alt="@product.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-shirt" style="font-size: 3rem; color: #9ca3af;"></i>
+                        }
+                    </div>
+                    <h3 style="font-size: 0.95rem; font-weight: 600; margin: 0 0 0.5rem 0; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">@product.Name</h3>
+                </a>
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    <span><i class="fa-solid fa-star" style="color: var(--accent-yellow);"></i> 4.9</span>
+                    <span>•</span>
+                    <span style="color: var(--accent-green); font-weight: 600;">Best Seller</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
+                        ৳@(product.Price.ToString("N0"))
+                    </div>
+                    <div style="font-size: 0.75rem; color: @(product.StockQuantity > 0 ? "var(--text-secondary)" : "var(--accent-red)");">
+                        @(product.StockQuantity > 0 ? $"{product.StockQuantity} left" : "Sold out")
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="id" value="@product.Id" />
+                        @if (product.StockQuantity > 0)
+                        {
+                            <button type="submit" class="btn-primary-small" style="background: black; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; border: none; cursor: pointer;">Add to Cart</button>
+                        }
+                        else
+                        {
+                            <button type="button" disabled class="btn-primary-small" style="background: var(--text-secondary); color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; border: none; cursor: not-allowed; opacity: 0.6;">Out of Stock</button>
+                        }
+                    </form>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="color: var(--accent-red); font-size: 0.85rem; font-weight: 600; text-decoration:none;">View</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- All Products Section -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4rem; margin-bottom: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 3rem;">
+        <h2 style="margin: 0; font-size: 1.5rem;">🛍️ All Products</h2>
+        <a asp-controller="Product" asp-action="Index" style="padding: 0.5rem 1rem; background: var(--text-primary); color: white; border-radius: 20px; font-size: 0.9rem; font-weight: 500; text-decoration: none;">View All</a>
+    </div>
+
+    @if (!Model.Products.Any())
+    {
+        <div style="text-align: center; padding: 4rem 2rem; background: #f8f9fa; border-radius: var(--radius-lg);">
+            <i class="fa-solid fa-box-open" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+            <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">No Products Found</h3>
+            <p style="color: var(--text-secondary); margin: 0;">Try adjusting your filters or browsing all categories.</p>
+        </div>
+    }
+    else
+    {
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+            @foreach (var product in Model.Products)
+            {
+                <div class="product-card" style="padding: 1rem; position: relative;">
+                    @if (product.IsFlashSale && product.DiscountPercentage > 0)
+                    {
+                        <div style="position: absolute; top: 1rem; left: 1rem; background: var(--accent-red); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; z-index: 2;">
+                            -@product.DiscountPercentage%
+                        </div>
+                    }
+                    <button onclick="addToWishlist(@product.Id)" style="position: absolute; top: 1rem; right: 1rem; background: black; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; box-shadow: var(--shadow-sm); z-index: 2; cursor:pointer;">
+                        <i class="fa-regular fa-heart" style="color: white;"></i>
+                    </button>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="text-decoration: none; color: inherit;">
+                        <div style="height: 180px; background: var(--bg-main); border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" alt="@product.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-shirt" style="font-size: 3rem; color: #9ca3af;"></i>
+                            }
+                        </div>
+                        <h3 style="font-size: 0.95rem; font-weight: 600; margin: 0 0 0.5rem 0; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">@product.Name</h3>
+                    </a>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            @if (product.IsFlashSale && product.DiscountPercentage > 0)
+                            {
+                                <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                                    <span style="font-size: 1.1rem; font-weight: 700; color: var(--accent-red);">৳@(product.DiscountedPrice.ToString("N0"))</span>
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary); text-decoration: line-through;">৳@(product.Price.ToString("N0"))</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
+                                    ৳@(product.Price.ToString("N0"))
+                                </div>
+                            }
+                        </div>
+                        <div style="font-size: 0.75rem; color: @(product.StockQuantity > 0 ? "var(--text-secondary)" : "var(--accent-red)");">
+                            @(product.StockQuantity > 0 ? $"{product.StockQuantity} left" : "Sold out")
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            @if (product.StockQuantity > 0)
+                            {
+                                <button type="submit" class="btn-primary-small" style="background: black; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; border: none; cursor: pointer;">Add to Cart</button>
+                            }
+                            else
+                            {
+                                <button type="button" disabled class="btn-primary-small" style="background: var(--text-secondary); color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.8rem; border: none; cursor: not-allowed; opacity: 0.6;">Out of Stock</button>
+                            }
+                        </form>
+                        <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" style="color: var(--accent-red); font-size: 0.85rem; font-weight: 600; text-decoration:none;">View</a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 4rem;">
+                <!-- Previous Button -->
+                @if (Model.CurrentPage > 1)
+                {
+                    <a asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-gender="@Model.SelectedGender" asp-route-page="@(Model.CurrentPage - 1)"
+                       style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; text-decoration: none; color: var(--text-primary);">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                }
+
+                <!-- Page Numbers -->
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <a asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-gender="@Model.SelectedGender" asp-route-page="@i"
+                       style="width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; font-weight: 600; 
+                              @(i == Model.CurrentPage ? "background: var(--text-primary); color: white;" : "background: transparent; color: var(--text-primary); border: 1px solid var(--border-color);")">
+                        @i
+                    </a>
+                }
+
+                <!-- Next Button -->
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <a asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-gender="@Model.SelectedGender" asp-route-page="@(Model.CurrentPage + 1)"
+                       style="width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; text-decoration: none; color: var(--text-primary);">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                }
+            </div>
+        }
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Flash Sale Timer Logic
+            var timerEl = document.getElementById("flash-sale-timer");
+            if (timerEl) {
+                var endTimeAttr = timerEl.getAttribute("data-endtime");
+                if (endTimeAttr) {
+                    var countDownDate = new Date(endTimeAttr).getTime();
+
+                    var x = setInterval(function() {
+                        var now = new Date().getTime();
+                        var distance = countDownDate - now;
+
+                        if (distance < 0) {
+                            clearInterval(x);
+                            document.getElementById("fs-hours").innerText = "00";
+                            document.getElementById("fs-minutes").innerText = "00";
+                            document.getElementById("fs-seconds").innerText = "00";
+                            return;
+                        }
+
+                        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        hours += (days * 24);
+
+                        document.getElementById("fs-hours").innerText = hours.toString().padStart(2, '0');
+                        document.getElementById("fs-minutes").innerText = minutes.toString().padStart(2, '0');
+                        document.getElementById("fs-seconds").innerText = seconds.toString().padStart(2, '0');
+                    }, 1000);
+                }
+            }
+
+            // Carousel Logic
+            const track = document.querySelector('.carousel-track');
+            if (track) {
+                const slides = Array.from(track.children);
+                const nextButton = document.getElementById('carousel-next');
+                const prevButton = document.getElementById('carousel-prev');
+                const indicators = Array.from(document.querySelectorAll('.carousel-indicator'));
+                
+                let currentIndex = 0;
+
+                const updateCarousel = (index) => {
+                    track.style.transform = `translateX(-${index * 100}%)`;
+                    indicators.forEach((ind, i) => {
+                        ind.style.background = i === index ? 'white' : 'rgba(255,255,255,0.5)';
+                        ind.style.width = i === index ? '20px' : '10px';
+                        ind.style.borderRadius = i === index ? '5px' : '50%';
+                    });
+                    currentIndex = index;
+                };
+
+                if (nextButton) {
+                    nextButton.addEventListener('click', () => {
+                        currentIndex = (currentIndex + 1) % slides.length;
+                        updateCarousel(currentIndex);
+                    });
+                }
+
+                if (prevButton) {
+                    prevButton.addEventListener('click', () => {
+                        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                        updateCarousel(currentIndex);
+                    });
+                }
+
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => updateCarousel(index));
+                });
+
+                // Auto-play
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel(currentIndex);
+                }, 5000);
+
+                // Initial state
+                updateCarousel(0);
+            }
+        });
+    </script>
+}

@@ -1,0 +1,105 @@
+@model IEnumerable<E_commerce_system.Models.CartItem>
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="cart-container" style="max-width: 1000px; margin: 0 auto; padding: 2rem 0;">
+    <h2 style="margin-bottom: 1rem;">Your Shopping Cart</h2>
+    
+    @if (TempData["Error"] != null)
+    {
+        <div style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 1rem; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="cart-items" style="background: var(--glass-bg); padding: 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+                @foreach (var item in Model)
+                {
+                    <div class="cart-item" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div style="width: 80px; height: 80px; background: rgba(0,0,0,0.3); border-radius: 8px; display: flex; justify-content: center; align-items: center; overflow: hidden;">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" style="width: 100%; height: 100%; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <i class="fa-solid fa-image" style="color: var(--text-secondary); font-size: 2rem;"></i>
+                                }
+                            </div>
+                             <div>
+                                 <h4 style="margin: 0;">@item.ProductName</h4>
+                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0 0 0;">
+                                     @if (item.IsFlashSale)
+                                     {
+                                         <span style="color: black; font-weight: 600;">৳@item.UnitPrice</span>
+                                         <span style="color: var(--text-secondary); text-decoration: line-through; font-size: 0.85rem;">৳@item.OriginalPrice</span>
+                                         <span style="background: var(--accent-red); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold;">SAVE @item.DiscountPercentage%</span>
+                                     }
+                                     else
+                                     {
+                                         <span style="color: black; font-weight: 600;">৳@item.UnitPrice</span>
+                                     }
+                                 </div>
+                                 <p style="font-size: 0.75rem; color: @(item.StockQuantity < 5 ? "var(--accent-red)" : "var(--accent-green)"); margin: 0.25rem 0 0 0; font-weight: 600;">
+                                     @(item.StockQuantity > 0 ? $"Only {item.StockQuantity} available" : "Out of Stock")
+                                 </p>
+                             </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <form asp-action="UpdateQuantity" method="post" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="hidden" name="id" value="@item.ProductId" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.StockQuantity"
+                                       onchange="this.form.submit()"
+                                       class="form-control" style="width: 60px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; border-radius: 6px; padding: 0.5rem; text-align: center;" />
+                            </form>
+                            
+                            <div style="min-width: 80px; text-align: right; font-weight: 600;">
+                                ৳@item.TotalPrice
+                            </div>
+
+                            <form asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="id" value="@item.ProductId" />
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.5rem;"><i class="fa-solid fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                
+                <a asp-controller="Home" asp-action="Index" style="color: var(--accent); text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
+            </div>
+            
+            <div class="cart-summary" style="background: var(--glass-bg); padding: 2rem; border-radius: 16px; border: 1px solid var(--glass-border); height: fit-content;">
+                <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span style="color: var(--text-secondary);">Subtotal</span>
+                    <span>৳@Model.Sum(x => x.TotalPrice)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <span style="color: var(--text-secondary);">Shipping</span>
+                    <span>৳10.00</span>
+                </div>
+                <hr style="border-color: var(--glass-border);" />
+                <div style="display: flex; justify-content: space-between; margin: 1.5rem 0; font-size: 1.25rem; font-weight: bold;">
+                    <span>Total</span>
+                    <span>৳@(Model.Sum(x => x.TotalPrice) + 10)</span>
+                </div>
+                <a asp-action="Checkout" class="btn-primary" style="display: block; text-align: center; width: 100%; padding: 1rem; border-radius: 8px; background: black; color: white; text-decoration: none; font-weight: 600; transition: background 0.3s; box-sizing: border-box; border: 1px solid black;">Proceed to Checkout</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 5rem 2rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid var(--glass-border);">
+            <i class="fa-solid fa-cart-shopping" style="font-size: 4rem; color: var(--text-secondary); margin-bottom: 1.5rem; opacity: 0.3;"></i>
+            <h3>Your cart is empty</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Looks like you haven't added anything to your cart yet.</p>
+            <a asp-controller="Product" asp-action="Index" class="btn-primary" style="padding: 1rem 2rem; border-radius: 8px; background: black; color: white; text-decoration: none; font-weight: 600; border: 1px solid black;">Start Shopping</a>
+        </div>
+    }
+</div>
